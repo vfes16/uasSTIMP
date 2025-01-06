@@ -1,39 +1,39 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { Stack, useRouter } from "expo-router";
+import { AuthProvider, useAuth } from "./authContext";
+import React, { useEffect } from "react";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
+function RootLayout() {
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (!isLoggedIn) {
+      router.replace("/login");
+    } else {
+      router.replace("./drawer/");
     }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
+  }, [isLoggedIn]);
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack>
+      <Stack.Screen
+        name="login"
+        options={{
+          title: "KOMIKU",
+          headerBackVisible: false,
+          headerTitleAlign: "center", // Menempatkan judul di tengah
+        }}
+      />
+      <Stack.Screen name="drawer" options={{ headerShown: false }} />
+      <Stack.Screen name="bacakomik" options={{ title: "Baca Komik" }} />
+      <Stack.Screen name="updatekomik" options={{ title: "Update Komik" }} />
+      <Stack.Screen name="daftarkomik" options={{ title: "Daftar Komik" }} />
+    </Stack>
+  );
+}
+
+export default function Layout() {
+  return (
+    <AuthProvider>
+      <RootLayout />
+    </AuthProvider>
   );
 }
