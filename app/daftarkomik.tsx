@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  FlatList,
-  Image,
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
+import {FlatList,Image,Text,View,StyleSheet,ScrollView,} from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
 import Svg, { Path } from "react-native-svg";
 
@@ -14,6 +7,10 @@ export default function DaftarKomik() {
   const [results, setResults] = useState([]);
   const { id, nameCate } = useLocalSearchParams();
 
+  useEffect(() => {
+    fetchComicsCategory();
+  }, [id, nameCate]);
+  
   const fetchComicsCategory = async () => {
     try {
       const options = {
@@ -39,10 +36,6 @@ export default function DaftarKomik() {
       console.error("Error fetching comics:", error);
     }
   };
-
-  useEffect(() => {
-    fetchComicsCategory();
-  }, [id, nameCate]);
 
   return (
     <ScrollView style={styles.container}>

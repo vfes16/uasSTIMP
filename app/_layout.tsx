@@ -15,17 +15,17 @@ function RootLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: "#121212" }, // Header gelap
-        headerTintColor: "#ffffff", // Warna teks di header
-        contentStyle: { backgroundColor: "#000000" }, // Latar belakang konten
-        headerTitleAlign: "center", // Judul di tengah
+        headerStyle: { backgroundColor: "#121212" },
+        headerTintColor: "#ffffff",
+        contentStyle: { backgroundColor: "#000000" },
+        headerTitleAlign: "center",
       }}>
       <Stack.Screen
         name="login"
         options={{
           title: "KOMIKU",
           headerBackVisible: false,
-          headerTitleAlign: "center", // Menempatkan judul di tengah
+          headerTitleAlign: "center",
         }}
       />
       <Stack.Screen name="drawer" options={{ headerShown: false }} />

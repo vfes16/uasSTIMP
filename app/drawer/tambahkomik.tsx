@@ -1,14 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-  ScrollView,
-  Text,
-  View,
-  FlatList,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import {ScrollView,Text,View,FlatList,Image,StyleSheet,TouchableOpacity,TextInput,} from "react-native";
 import RBSheet from "react-native-raw-bottom-sheet";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
@@ -23,6 +14,12 @@ export default function TambahKomik() {
   const [thumbnail, setThumbnail] = useState("");
   const [description, setDesc] = useState("");
   const [author, setAuthor] = useState("");
+  const [categoryOption, setCategoryOption] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const refRBSheet = useRef();
+  const [imageUri, setImageUri] = useState("");
+  const [id, setId] = useState("");
+  const [uid, setUid] = useState("");
   // const [scenes, setScenes] = useState(null);
 
   // const [komik, setKomik] = useState({
@@ -34,15 +31,16 @@ export default function TambahKomik() {
   //   scenes: null,
   // });
   // const [triggerRefresh, setTriggerRefresh] = useState(false);
-  const refRBSheet = useRef();
-  const [imageUri, setImageUri] = useState("");
-  const [id, setId] = useState("");
-  const [uid, setUid] = useState("");
   // const params = useLocalSearchParams();
 
-  const [categoryOption, setCategoryOption] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  useEffect(() => {
+    getUid();
+  }, [uid]);
 
+  useEffect(() => {
+    fetchCategories();
+    fetchId();
+  });
   const { isFieldInError, getErrorsInField, isFormValid } = useValidation({
     fieldsRules: {
       title: { required: true },
@@ -67,10 +65,6 @@ export default function TambahKomik() {
     }
   };
 
-  useEffect(() => {
-    getUid();
-  }, [uid]);
-
   const fetchCategories = async () => {
     try {
       const options = {
@@ -81,7 +75,7 @@ export default function TambahKomik() {
         body: "id=",
       };
       const response = await fetch(
-        "https://ubaya.xyz/react/160421078/uas/pilihankategori.php",
+        "https://ubaya.xyz/react/160421078/uas/listkategori.php",
         options
       );
       const json = await response.json();
@@ -110,10 +104,112 @@ export default function TambahKomik() {
     }
   };
 
-  useEffect(() => {
-    fetchCategories();
-    fetchId();
-  });
+  const tambahKomik = async () => {
+    let komikid = 0;
+    const submitData = () => {
+      try {
+        const options = {
+          method: "POST",
+          headers: new Headers({
+            "Content-Type": "application/x-www-form-urlencoded",
+          }),
+          body:
+            "thumbnail=" +
+            thumbnail +
+            "&" +
+            "title=" +
+            title +
+            "&" +
+            "desc=" +
+            description +
+            "&" +
+            "release_date=" +
+            releasedate +
+            "&" +
+            "author=" +
+            author +
+            "&" +
+            "uid=" +
+            uid,
+        };
+        fetch("https://ubaya.xyz/react/160421078/uas/komikbaru.php", options)
+          .then((response) => response.json())
+          .then(async (resjson) => {
+            console.log(resjson);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const addKomikKategori = async () => {
+      try {
+        const options = {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: "komik_id=" + id + "&kategori_id=" + selectedCategory,
+        };
+        fetch(
+          "https://ubaya.xyz/react/160421078/uas/tambahkomikkategori.php",
+          options
+        )
+          .then((response) => response.json())
+          .then(async (resjson) => {
+            console.log(resjson);
+          });
+        // setSelectedCategory("");
+      } catch (error) {
+        console.error("Failed to add comic category:", error);
+      }
+    };
+
+    const uploadScene = async () => {
+      try {
+        const data = new FormData();
+        data.append("id", id);
+
+        const response = await fetch(imageUri);
+        const blob = await response.blob();
+        data.append("image", blob, "scene.png");
+
+        const options = {
+          method: "POST",
+          body: data,
+          headers: {},
+        };
+
+        fetch(
+          "https://ubaya.xyz/react/160421078/uas/uploadkoten.php",
+          options
+        )
+          .then((response) => response.json())
+          .then((resjson) => {
+            console.log(resjson);
+            if (resjson.result === "success") alert("sukses");
+            setImageUri("");
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    submitData();
+    addKomikKategori();
+    await uploadScene();
+    alert("Comic succesfuly added");
+    router.replace("..");
+  };
+
+  const imgGaleri = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
 
   const renderTitleErrors = () => {
     if (isFieldInError("title")) {
@@ -197,18 +293,6 @@ export default function TambahKomik() {
     );
   };
 
-  const imgGaleri = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-    }
-  };
-
   const renderImageUri = () => {
     if (imageUri !== "") {
       return (
@@ -222,101 +306,6 @@ export default function TambahKomik() {
       );
     }
     return null;
-  };
-
-  const tambahKomik = async () => {
-    let komikid = 0;
-    const submitData = () => {
-      try {
-        const options = {
-          method: "POST",
-          headers: new Headers({
-            "Content-Type": "application/x-www-form-urlencoded",
-          }),
-          body:
-            "thumbnail=" +
-            thumbnail +
-            "&" +
-            "title=" +
-            title +
-            "&" +
-            "desc=" +
-            description +
-            "&" +
-            "release_date=" +
-            releasedate +
-            "&" +
-            "author=" +
-            author +
-            "&" +
-            "uid=" +
-            uid,
-        };
-        fetch("https://ubaya.xyz/react/160421078/uas/newKomik.php", options)
-          .then((response) => response.json())
-          .then(async (resjson) => {
-            console.log(resjson);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const addKomikKategori = async () => {
-      try {
-        const options = {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: "komik_id=" + id + "&kategori_id=" + selectedCategory,
-        };
-        fetch(
-          "https://ubaya.xyz/react/160421078/uas/tambahkomikkategori.php",
-          options
-        )
-          .then((response) => response.json())
-          .then(async (resjson) => {
-            console.log(resjson);
-          });
-        // setSelectedCategory("");
-      } catch (error) {
-        console.error("Failed to add comic category:", error);
-      }
-    };
-
-    const uploadScene = async () => {
-      try {
-        const data = new FormData();
-        data.append("id", id);
-
-        const response = await fetch(imageUri);
-        const blob = await response.blob();
-        data.append("image", blob, "scene.png");
-
-        const options = {
-          method: "POST",
-          body: data,
-          headers: {},
-        };
-
-        fetch(
-          "https://ubaya.xyz/react/160421078/uas/uploadhalaman.php",
-          options
-        )
-          .then((response) => response.json())
-          .then((resjson) => {
-            console.log(resjson);
-            if (resjson.result === "success") alert("sukses");
-            setImageUri("");
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    submitData();
-    addKomikKategori();
-    await uploadScene();
-    alert("Comic succesfuly added");
-    router.replace("..");
   };
 
   return (

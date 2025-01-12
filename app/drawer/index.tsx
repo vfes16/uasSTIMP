@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "expo-router";
-import {
-  Text,
-  View,
-  TextInput,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Animated,
-  ActivityIndicator,
-} from "react-native";
+import {Text,View,TextInput,StyleSheet,FlatList,TouchableOpacity,Image,ScrollView,Animated,ActivityIndicator,} from "react-native";
 import Svg, { Path } from "react-native-svg";
 
 export default function Index() {
@@ -23,6 +12,11 @@ export default function Index() {
 
   const fadeAnim = new Animated.Value(0);
 
+  useEffect(() => {
+    fetchCategories();
+    searchComics();
+  }, []);
+  
   const fetchCategories = async () => {
     try {
       const response = await fetch(
@@ -100,11 +94,6 @@ export default function Index() {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchCategories();
-    searchComics();
-  }, []);
 
   return (
     <ScrollView style={styles.container}>

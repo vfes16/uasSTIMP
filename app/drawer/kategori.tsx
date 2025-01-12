@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#121212", // Background tema gelap
+    backgroundColor: "#121212",
     width: "100%",
     maxWidth: "100%",
     alignSelf: "center",
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginVertical: 10,
     textAlign: "center",
-    color: "#ffffff", // Warna teks terang
+    color: "#ffffff",
   },
   categoryButton: {
     backgroundColor: '#12121a',

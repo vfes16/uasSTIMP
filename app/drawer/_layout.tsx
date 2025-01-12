@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DarkTheme } from "@react-navigation/native"; // Gunakan tema gelap
 import { AuthProvider } from "../authContext";
 import Index from "./index";
 import Cari from "./cari";
@@ -34,10 +33,10 @@ function DrawerLayout() {
   return (
     <Drawer.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: "#121212" }, // Header gelap
-        headerTintColor: "#ffffff", // Warna teks di header
-        drawerStyle: { backgroundColor: "#121212" }, // Drawer gelap
-        drawerLabelStyle: { color: "#ffffff" }, // Warna teks item Drawer
+        headerStyle: { backgroundColor: "#121212" },
+        headerTintColor: "#ffffff",
+        drawerStyle: { backgroundColor: "#121212" },
+        drawerLabelStyle: { color: "#ffffff" },
       }}
     >
       <Drawer.Screen

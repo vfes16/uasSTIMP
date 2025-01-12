@@ -4,8 +4,6 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams } from "expo-router";
 import RNPickerSelect from "react-native-picker-select";
-import { Button } from "@rneui/base";
-import Svg, { Path } from "react-native-svg";
 
 export default function UpdateKomik() {
   const [title, setTitle] = useState("");
@@ -14,10 +12,14 @@ export default function UpdateKomik() {
   const [author, setAuthor] = useState("");
   const [category, setCategory] = useState(null);
   const [scenes, setScenes] = useState(null);
-
   const [categoryOption, setCategoryOption] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-
+  const [triggerRefresh, setTriggerRefresh] = useState(false);
+  const refRBSheet = useRef();
+  const [imageUri, setImageUri] = useState("");
+  const [id, setId] = useState("1");
+  const params = useLocalSearchParams();
+  
   const [komik, setKomik] = useState({
     judul: "",
     deskripsi: "",
@@ -25,12 +27,7 @@ export default function UpdateKomik() {
     pengarang: "",
     kategori: null,
     konten: null,
-  });
-  const [triggerRefresh, setTriggerRefresh] = useState(false);
-  const refRBSheet = useRef();
-  const [imageUri, setImageUri] = useState("");
-  const [id, setId] = useState("1");
-  const params = useLocalSearchParams();
+});
 
   useEffect(() => {
     if (params.id) {
@@ -190,22 +187,6 @@ export default function UpdateKomik() {
     );
   };
 
-  // const renderImageUri = () => {
-  //   if (imageUri !== "") {
-  //     return (
-  //       <View style={styles.centered}>
-  //         <Image
-  //           style={styles.selectedImage}
-  //           resizeMode="contain"
-  //           source={{ uri: imageUri }}
-  //         />
-  //         <Button title="Upload" onPress={uploadScene} />
-  //       </View>
-  //     );
-  //   }
-  //   return null;
-  // };
-
   const imgGaleri = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -233,7 +214,7 @@ export default function UpdateKomik() {
     };
 
     try {
-      fetch("https://ubaya.xyz/react/160421078/uas/uploadhalaman.php", options)
+      fetch("https://ubaya.xyz/react/160421078/uas/uploadkonten.php", options)
         .then((response) => response.json())
         .then((resjson) => {
           console.log(resjson);
@@ -247,7 +228,7 @@ export default function UpdateKomik() {
   };
 
   const deleteScene = async (sceneUri: string) => {
-    const fileName = sceneUri.split("/").pop(); // Extract file name from URI
+    const fileName = sceneUri.split("/").pop();
 
     const formData = new FormData();
     formData.append("id", id);
@@ -255,7 +236,7 @@ export default function UpdateKomik() {
 
     try {
       const response = await fetch(
-        "https://ubaya.xyz/react/160421078/uas/deletehalaman.php",
+        "https://ubaya.xyz/react/160421078/uas/deletekonten.php",
         {
           method: "POST",
           body: formData,

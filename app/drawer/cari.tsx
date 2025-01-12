@@ -1,39 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "expo-router";
 import {
-  Text,
-  View,
-  TextInput,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Animated,
-  ActivityIndicator,
+  Text, View, TextInput, StyleSheet, FlatList, TouchableOpacity, Image, ScrollView, Animated, ActivityIndicator,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
 export default function Index() {
-  const [categories, setCategories] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [results, setResults] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const fadeAnim = new Animated.Value(0);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch(
-        "https://ubaya.xyz/react/160421078/uas/kategori.php"
-      );
-      const json = await response.json();
-      setCategories(json.data);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
 
   const searchComics = async (query = "") => {
     setIsLoading(true);
@@ -68,41 +45,7 @@ export default function Index() {
     }
   };
 
-  const searchComicsCategory = async (categoryId) => {
-    setSelectedCategory(categoryId);
-    setIsLoading(true);
-    try {
-      const options = {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/x-www-form-urlencoded",
-        }),
-        body: "kategori=" + categoryId,
-      };
-      const response = await fetch(
-        "https://ubaya.xyz/react/160421078/uas/komik.php",
-        options
-      );
-      const json = await response.json();
-      if (json.result === "success") {
-        setResults(json.data);
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }).start();
-      } else {
-        alert("Failed to fetch comics");
-      }
-    } catch (error) {
-      console.error("Error searching comics:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchCategories();
     searchComics();
   }, []);
 

@@ -41,8 +41,8 @@ function Login() {
     <Card
       containerStyle={{
         borderRadius: 10,
-        backgroundColor: "#1E1E1E", // Background Card Tema Gelap
-        borderColor: "#333333", // Border Card Gelap
+        backgroundColor: "#1E1E1E",
+        borderColor: "#333333",
       }}
     >
       <Card.Title style={{ fontFamily: "verdana", color: "#FFFFFF" }}>
@@ -56,7 +56,7 @@ function Login() {
             textAlign: "left",
             width: 200,
             marginBottom: 8,
-            color: "#FFFFFF", // Warna teks terang
+            color: "#FFFFFF",
           }}
         >
           Username{" "}
@@ -64,7 +64,7 @@ function Login() {
         <TextInput
           style={styles.input}
           placeholder="Masukkan username"
-          placeholderTextColor="#AAAAAA" // Placeholder terang
+          placeholderTextColor="#AAAAAA"
           onChangeText={(text) => setUsername(text)}
           value={username}
         />
@@ -76,7 +76,7 @@ function Login() {
             textAlign: "left",
             width: 200,
             marginBottom: 8,
-            color: "#FFFFFF", // Warna teks terang
+            color: "#FFFFFF",
           }}
         >
           Password{" "}
@@ -85,7 +85,7 @@ function Login() {
           secureTextEntry={true}
           style={styles.input}
           placeholder="Masukkan password"
-          placeholderTextColor="#AAAAAA" // Placeholder terang
+          placeholderTextColor="#AAAAAA"
           onChangeText={(text) => setPassword(text)}
           value={password}
         />
@@ -93,9 +93,9 @@ function Login() {
       <View style={styles.viewRow}>
         <Button
           style={styles.button}
-          titleStyle={{ fontWeight: "bold", color: "#1E1E1E" }} // Teks tombol gelap
+          titleStyle={{ fontWeight: "bold", color: "#1E1E1E" }}
           buttonStyle={{
-            backgroundColor: "#4CAF50", // Hijau terang untuk tombol
+            backgroundColor: "#4CAF50",
             borderRadius: 8,
           }}
           title="Submit"
@@ -118,9 +118,9 @@ const styles = StyleSheet.create({
     height: 40,
     width: 200,
     borderWidth: 1,
-    borderColor: "#555555", // Border input gelap
-    backgroundColor: "#2C2C2C", // Background input gelap
-    color: "#FFFFFF", // Teks input terang
+    borderColor: "#555555",
+    backgroundColor: "#2C2C2C",
+    color: "#FFFFFF",
     padding: 10,
     fontFamily: "verdana",
     borderRadius: 8,

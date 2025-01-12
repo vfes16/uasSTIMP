@@ -1,23 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Link,
-  useRouter,
-  useLocalSearchParams,
-  useFocusEffect,
-} from "expo-router";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Image,
-  ScrollView,
-  ActivityIndicator,
-  TextInput,
-  Button,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
+import { Link, useRouter, useLocalSearchParams, useFocusEffect, } from "expo-router";
+import { View, Text, FlatList, StyleSheet, Image, ScrollView, ActivityIndicator, TextInput, Button, Dimensions, TouchableOpacity, } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Svg, { Path } from "react-native-svg";
 
@@ -30,15 +13,17 @@ export default function BacaKomik() {
   const [userRating, setUserRating] = useState(0);
   const router = useRouter();
 
+  useEffect(() => {
+    getUsername();
+    fetchComicDetails();
+  }, [id]);
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
+  useFocusEffect(
+    useCallback(() => {
+      fetchComicDetails();
+    }, [id])
+  );
+  
   const getUsername = async () => {
     try {
       const storedUsername = await AsyncStorage.getItem("username");
@@ -48,6 +33,14 @@ export default function BacaKomik() {
     } catch (error) {
       console.error("Error retrieving username from AsyncStorage: ", error);
     }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   const fetchComicDetails = async () => {
@@ -68,11 +61,7 @@ export default function BacaKomik() {
       if (json.result === "success") {
         const comicData = json.data;
 
-        if (
-          comicData.rating &&
-          Array.isArray(comicData.rating) &&
-          comicData.rating.length > 0
-        ) {
+        if (comicData.rating &&Array.isArray(comicData.rating) && comicData.rating.length > 0) {
           let totalRating = 0;
           console.log(comicData.rating);
 
@@ -86,11 +75,7 @@ export default function BacaKomik() {
           comicData.averageRating = "0.0";
         }
 
-        if (
-          comicData.kategori &&
-          Array.isArray(comicData.kategori) &&
-          comicData.kategori.length > 0
-        ) {
+        if (comicData.kategori && Array.isArray(comicData.kategori) && comicData.kategori.length > 0) {
           let categoryValues = [];
 
           for (const item of comicData.kategori) {
@@ -118,19 +103,6 @@ export default function BacaKomik() {
       setLoading(false);
     }
   };
-
-  const Star = ({ fill, onPress }) => (
-    <TouchableOpacity style={styles.star} onPress={onPress}>
-      <Svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-        <Path
-          d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-          fill={fill ? "#FFD700" : "none"}
-          stroke="#FFD700"
-          strokeWidth="1"
-        />
-      </Svg>
-    </TouchableOpacity>
-  );
 
   const handleStarPress = (value) => {
     setUserRating(value);
@@ -204,18 +176,6 @@ export default function BacaKomik() {
       console.error("Error adding comment:", error);
     }
   };
-
-
-  useEffect(() => {
-    getUsername();
-    fetchComicDetails();
-  }, [id]);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchComicDetails();
-    }, [id])
-  );
 
   if (loading) {
     return (
@@ -424,7 +384,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   infoLabel: {
-    color: "#12121a",
+    color: "#FFFFFF",
     fontSize: 12,
     marginBottom: 4,
   },
