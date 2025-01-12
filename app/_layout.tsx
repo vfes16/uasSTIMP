@@ -1,39 +1,45 @@
 import { Stack, useRouter } from "expo-router";
 import { AuthProvider, useAuth } from "./authContext";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 function RootLayout() {
-
-  const { isLoggedIn } = useAuth(); // Get logged-in status
+  const { isLoggedIn } = useAuth();
   const router = useRouter();
   useEffect(() => {
-  // Redirect based on login status
-  if (!isLoggedIn) {
-  // If not logged in, redirect to login screen
-  router.replace("/login");
-  } else {
-  // If logged in, redirect to index
-  router.replace("/");
-  }
+    if (!isLoggedIn) {
+      router.replace("/login");
+    } else {
+      router.replace("./drawer/");
+    }
   }, [isLoggedIn]);
-
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ title: 'Home' }} />
-      <Stack.Screen name="login" options={{ title: 'Login' }} />
-      <Stack.Screen name="genreDisplay" options={{ title: 'genreDisplay' }}/>
-      <Stack.Screen name="daftarkomik" options={{ title: 'daftarkomik' }}/>
-      <Stack.Screen name="addKomik" options={{ title: 'addKomik' }}/>
-      <Stack.Screen name="cariKomik" options={{ title: 'carikomik' }}/>
+    <Stack
+      screenOptions={{
+        headerStyle: { backgroundColor: "#121212" }, // Header gelap
+        headerTintColor: "#ffffff", // Warna teks di header
+        contentStyle: { backgroundColor: "#000000" }, // Latar belakang konten
+        headerTitleAlign: "center", // Judul di tengah
+      }}>
+      <Stack.Screen
+        name="login"
+        options={{
+          title: "KOMIKU",
+          headerBackVisible: false,
+          headerTitleAlign: "center", // Menempatkan judul di tengah
+        }}
+      />
+      <Stack.Screen name="drawer" options={{ headerShown: false }} />
+      <Stack.Screen name="bacakomik" options={{ title: "Baca Komik" }} />
+      <Stack.Screen name="updatekomik" options={{ title: "Update Komik" }} />
+      <Stack.Screen name="daftarkomik" options={{ title: "Daftar Komik" }} />
     </Stack>
   );
 }
 
 export default function Layout() {
   return (
-  <AuthProvider>
-     <RootLayout />
-     
-  </AuthProvider>
+    <AuthProvider>
+      <RootLayout />
+    </AuthProvider>
   );
-  }
+}
